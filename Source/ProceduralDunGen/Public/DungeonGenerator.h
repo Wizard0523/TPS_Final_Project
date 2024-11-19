@@ -25,5 +25,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> actorToSpawn;
+	void preventOverlap();
+	void initDungeon();
 
 };
