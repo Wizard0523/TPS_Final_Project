@@ -27,7 +27,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> actorToSpawn;
-
 	
 	void rewrite();
 

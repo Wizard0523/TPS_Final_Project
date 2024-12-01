@@ -12,17 +12,34 @@ class PROCEDURALDUNGEN_API ARoomBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ARoomBase();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	//enum contentType;
+	
+	enum direction {
+		NORTH,
+		EAST,
+		SOUTH,
+		WEST
+	};
 
+	enum contentType {
+		START,
+		MONSTER,
+		LOOT,
+		PUZZLE,
+		KEY,
+		BOSS,
+	};
+
+	enum contentType content;
+
+	TMap<direction, ARoomBase*> connectedRooms;
+	//direction getOpposite(enum direction);
+	static direction getOpposite(direction);
 };
