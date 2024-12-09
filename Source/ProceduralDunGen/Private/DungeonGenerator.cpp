@@ -6,6 +6,8 @@
 #include "MonsterMarker.h"
 #include "Logging/StructuredLog.h"
 #include "ChestActor.h"
+#include "KeyActor.h"
+#include "PuzzleActor.h"
 
 
 // Sets default values
@@ -46,7 +48,7 @@ ARoomBase* ADungeonGenerator::initDungeon()
 	rooms.Add(currentLocation, startingRoom);
 
 	const float offset = 1500.f;
-	int roomBudget = 9; // num of rooms created between start and boss rooms
+	int roomBudget = 100; // num of rooms created between start and boss rooms
 	int roomCount = 0;
 	int wastedMoves = 0; //for debugging purposes
 	
@@ -188,10 +190,11 @@ ARoomBase* ADungeonGenerator::initDungeon()
 
 					//randomly select content type for each room:
 					ARoomBase::contentType roomContent = ARoomBase::contentType::EMPTY;
-					int randContent = FMath::RandRange(1, 4);
+					int randContent = FMath::RandRange(1, 12);
 					switch (randContent) {
 					case 1:
 						roomContent = ARoomBase::contentType::PUZZLE;
+						GetWorld()->SpawnActor<APuzzleActor>(puzzle, currentLocation, spawnRotation, spawnInfo);
 						break;
 
 					case 2:
@@ -201,6 +204,7 @@ ARoomBase* ADungeonGenerator::initDungeon()
 
 					case 3:
 						roomContent = ARoomBase::contentType::KEY;
+						GetWorld()->SpawnActor<AKeyActor>(treasureKey, currentLocation, spawnRotation, spawnInfo);
 						break;
 
 					case 4:
@@ -208,7 +212,7 @@ ARoomBase* ADungeonGenerator::initDungeon()
 						GetWorld()->SpawnActor<AChestActor>(treasureChest, currentLocation, spawnRotation, spawnInfo);
 						break;
 
-					case 5:
+					default:
 						break;
 					}
 					newRoom->content = roomContent;

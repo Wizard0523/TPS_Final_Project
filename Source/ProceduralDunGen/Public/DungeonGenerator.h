@@ -34,6 +34,12 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> treasureChest;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> treasureKey;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> puzzle;
+
 	void rewrite();
 
 };
