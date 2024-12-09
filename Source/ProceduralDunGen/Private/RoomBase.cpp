@@ -53,13 +53,4 @@ ARoomBase::direction ARoomBase::getOpposite(direction dir)
 	return oppositeDirection;
 }
 
-/*
-
-{	
-	enum direction oppositeDirection;
-
-	
-	return oppositeDirection;
-}
-*/
 

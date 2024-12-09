@@ -1,19 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "RoomBase.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "DungeonGenerator.generated.h"
+#include "KeyActor.generated.h"
 
 UCLASS()
-class PROCEDURALDUNGEN_API ADungeonGenerator : public AActor
+class PROCEDURALDUNGEN_API AKeyActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ADungeonGenerator();
+	AKeyActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,18 +22,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	ARoomBase* initDungeon();
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> actorToSpawn;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> monsterMarker;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> treasureChest;
-
-	void rewrite();
 
 };

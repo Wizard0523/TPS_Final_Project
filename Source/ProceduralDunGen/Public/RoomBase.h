@@ -35,11 +35,12 @@ public:
 		PUZZLE,
 		KEY,
 		BOSS,
+		EMPTY,
 	};
 
 	enum contentType content;
+	int roomID;
 
 	TMap<direction, ARoomBase*> connectedRooms;
-	//direction getOpposite(enum direction);
 	static direction getOpposite(direction);
 };
