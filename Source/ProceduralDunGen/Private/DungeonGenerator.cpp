@@ -21,7 +21,8 @@ ADungeonGenerator::ADungeonGenerator()
 void ADungeonGenerator::BeginPlay()
 {
 	Super::BeginPlay();
-	initDungeon();
+	ARoomBase* rootRoom = initDungeon();
+	rewriteContent(rootRoom);
 }
 
 // Called every frame
@@ -32,7 +33,6 @@ void ADungeonGenerator::Tick(float DeltaTime)
 
 ARoomBase* ADungeonGenerator::initDungeon()
 {
-	TMap<FVector, ARoomBase*> rooms;
 	int roomNumber = 1;
 
 	//spawn starting room
@@ -242,21 +242,43 @@ ARoomBase* ADungeonGenerator::initDungeon()
 //1. for each key room in a section, there is exactly one treasure room that section
 //2. there can't be 3 monster/boss rooms in a row
 //3. 
-void ADungeonGenerator::rewrite()
+void ADungeonGenerator::rewriteContent(ARoomBase* rootNode)
 {
 	//traverse graph using depth first search: https://www.youtube.com/watch?v=ymlzHmRN4To
-	
+
 	//stack used to return to previous rooms. Pop elements from the stack when they are fully explored, i.e. are connected to no more unexplored nodes
-	TArray<ARoomBase> rooms;
+	TArray<ARoomBase*> recentRooms;
+	ARoomBase* currentRoom = rootNode;
 
-	//how do I keep track of explored rooms?
+	recentRooms.Add(rootNode);
+	while (recentRooms.Num() > 0) {
+		if (currentRoom) {
+			if (currentRoom->beenVisited) {
+				if (currentRoom->unexploredRooms.Num() == 0) {
+					recentRooms.Pop(currentRoom);
+				}
+				else {
+					currentRoom = currentRoom->unexploredRooms.Pop();
+				}
+			}
+			else {
+				currentRoom->beenVisited = true;
+				//for each connected room:
+				for (auto It = currentRoom->connectedRooms.CreateConstIterator(); It; ++It)
+				{
+					//add unexplored rooms to a stack
+					currentRoom->unexploredRooms.Add(It.Value());
+					UE_LOGFMT(LogTemp, Display, "unexplored room ({number}) added to stack", It.Value()->roomID);
+
+					//for development purposes
+					for (int i = 0; i < currentRoom->unexploredRooms.Num(); ++i) {
+						UE_LOGFMT(LogTemp, Display, "room {number} still on the stack", currentRoom->unexploredRooms[i]->roomID);
+					}
+				}
+			}
+		}
+	}
+}	
 
 
-
-
-	//check for rules along the way:
-	//i.e. keep count of the num of keys and treasures
-
-
-}
 

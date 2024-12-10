@@ -40,6 +40,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> puzzle;
 
-	void rewrite();
+	void rewriteContent(ARoomBase*);
+	TMap<FVector, ARoomBase*> rooms;
 
 };

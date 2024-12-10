@@ -43,4 +43,6 @@ public:
 
 	TMap<direction, ARoomBase*> connectedRooms;
 	static direction getOpposite(direction);
+	TArray<ARoomBase*> unexploredRooms;
+	bool beenVisited;
 };
