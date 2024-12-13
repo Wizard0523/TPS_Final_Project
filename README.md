@@ -3,7 +3,10 @@ Welcome to my procedural dunGen!
 Questions About the Project:
 
 * What dataset do you analyze? Are there multiple tables? For each table, answer what are the rows and what are the columns.<br>
+
 There aren't any tables, but there could be a table that stores rooms. Each room is a row, with columns for roomID, content type, connected rooms, and I was hoping to implement different floors, and each room would have a column for the floor they are on.
+
+![Screenshot 2024-12-13 at 11 26 46 AM](https://github.com/user-attachments/assets/2beb46c2-b531-453e-8c56-8b0e12ab93fb)
 
 * What questions is your software meant to answer on your dataset? <br>
 
@@ -32,3 +35,5 @@ My code became somewhat unreadable, and difficult to work with, so I added some 
 
 * What programming languages, frameworks, or technologies did you use? <br>
 C++, Unreal Engine
+
+![Screenshot 2024-12-13 at 11 25 05 AM](https://github.com/user-attachments/assets/6f8e8aed-3f93-4765-91e7-471806ad6665)
