@@ -1,12 +1,38 @@
 Welcome to my procedural dunGen!
 
+How to demo project:
+
+1. Install unreal engine 5.4.4 or above.
+
+2. Clone repo locally, to UnrealProjects/<ProjectFolder> -- you will need to create the project folder, and name it anything.
+
+3. Open Unreal Engine. Browse to find project folder. If newer than 5.4.4, then U.E. will ask you if you want to clone a copy, press yes.
+
+4. Compile code:
+
+![image](https://github.com/user-attachments/assets/76ae89a9-8249-441f-b189-67680548d192)<br>
+Press button to compile code ^^
+
+5. Press green button to run code.
+
+6. While program is running. You can press CTRL + F1 to regain control of cursor.
+
+7. Check log for details about the run:
+   
+![Screenshot 2024-12-13 at 11 40 03 AM](https://github.com/user-attachments/assets/42975673-4dc7-453e-a237-9ef3f1e3cfba) <br>
+-- the log prints out information about the process at each stage: initializing the dungeon, and rewriting the dungeon
+
+
+
 Questions About the Project:
 
 * What dataset do you analyze? Are there multiple tables? For each table, answer what are the rows and what are the columns.<br>
 
 There aren't any tables, but there could be a table that stores rooms. Each room is a row, with columns for roomID, content type, connected rooms, and I was hoping to implement different floors, and each room would have a column for the floor they are on.
 
-![Screenshot 2024-12-13 at 11 26 46 AM](https://github.com/user-attachments/assets/2beb46c2-b531-453e-8c56-8b0e12ab93fb)
+The picture below was an early demo of a possible table:<br>
+![Screenshot 2024-12-13 at 11 26 46 AM](https://github.com/user-attachments/assets/2beb46c2-b531-453e-8c56-8b0e12ab93fb) <br>
+I no longer track depth. I also track the Z coordinate of each room now, so that rooms can be on different heigh levels. Additionally, I should track which level each floor is on with an int.
 
 * What questions is your software meant to answer on your dataset? <br>
 
