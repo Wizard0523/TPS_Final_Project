@@ -43,4 +43,7 @@ public:
 	void rewriteContent(ARoomBase*);
 	TMap<FVector, ARoomBase*> rooms;
 
+	void getUnexploredRooms(ARoomBase*);
+	void printStack(ARoomBase*);
+
 };
