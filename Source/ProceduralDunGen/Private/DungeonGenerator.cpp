@@ -33,6 +33,7 @@ void ADungeonGenerator::Tick(float DeltaTime)
 
 ARoomBase* ADungeonGenerator::initDungeon()
 {
+	UE_LOG(LogTemp, Display, TEXT("--- Initialize Dungeon ---"));
 	int roomNumber = 1;
 
 	//spawn starting room
@@ -42,6 +43,7 @@ ARoomBase* ADungeonGenerator::initDungeon()
 	ARoomBase* startingRoom = GetWorld()->SpawnActor<ARoomBase>(actorToSpawn, currentLocation, spawnRotation, spawnInfo);
 	if (startingRoom) {
 		startingRoom->roomID = roomNumber;
+		UE_LOG(LogTemp, Display, TEXT("           "));
 		UE_LOGFMT(LogTemp, Display, "Room {number}", startingRoom->roomID);
 	}
 	roomNumber += 1;
@@ -132,24 +134,14 @@ ARoomBase* ADungeonGenerator::initDungeon()
 				}
 				rooms.Add(currentLocation, newRoom);
 				if (newRoom) {
+					UE_LOG(LogTemp, Display, TEXT("           "));
 					UE_LOGFMT(LogTemp, Display, "Room {number}", newRoom->roomID);
+
 				}
 
 				//add connections to each room surrounding the next room -- including current room
 				if (currentRoom && newRoom) {
-					/*
-					currentRoom->connectedRooms.Add(roomDirection, newRoom);
-					ARoomBase::direction oppositeDirection = ARoomBase::getOpposite(roomDirection);
-					newRoom->connectedRooms.Add(oppositeDirection, currentRoom);
-					UE_LOGFMT(LogTemp, Display, "test: is connected to {number}", currentRoom->roomID);
-
-					if (rooms.Contains(farLocation)) {
-					ARoomBase* farRoom = *rooms.Find(farLocation);
-					newRoom->connectedRooms.Add(roomDirection, farRoom);
-					farRoom->connectedRooms.Add(oppositeDirection, newRoom);
-					UE_LOGFMT(LogTemp, Display, "far: is connected to {number}", farRoom->roomID);
-					*/
-
+					
 					//NORTH
 					FVector northLocation = currentLocation + FVector(0.f, offset, 0.f);
 					if (rooms.Contains(northLocation)) {
@@ -216,25 +208,13 @@ ARoomBase* ADungeonGenerator::initDungeon()
 						break;
 					}
 					newRoom->content = roomContent;
-
-					
-					//print room name, content type, and all of its connections to log
-					//newRoom
-
-					
 				}
 			}
 			//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Added Room"));
 			roomCount += 1;
 		}
-
-		UE_LOGFMT(LogTemp, Display, "Number of wasted moves: {number}", wastedMoves);
-
-
-		//for each room in rooms
-
-		
 	}
+	UE_LOGFMT(LogTemp, Display, "Number of wasted moves: {number}", wastedMoves);
 	return startingRoom;
 }
 
@@ -263,8 +243,9 @@ void ADungeonGenerator::rewriteContent(ARoomBase* rootNode)
 	
 	while (recentRooms.Num() > 0) {
 		loopCount += 1;
+		UE_LOG(LogTemp, Display, TEXT("           "));
 		UE_LOGFMT(LogTemp, Display, "loop {number}:", loopCount);
-		UE_LOG(LogTemp, Display, TEXT(""));
+		
 		if (currentRoom != nullptr) {
 			//first visit:
 			if (!currentRoom->beenVisited) {
@@ -276,12 +257,19 @@ void ADungeonGenerator::rewriteContent(ARoomBase* rootNode)
 
 			//each visit:
 			printStack(currentRoom);
-
 			//no more rooms to explore:
 			if (currentRoom->unexploredRooms.Num() == 0) {
+				UE_LOGFMT(LogTemp, Display, "room {number} has no more rooms to explore", currentRoom->roomID);
 				if (recentRooms.Num() > 0) {
-					currentRoom = recentRooms.Pop();
+					currentRoom = recentRooms.Pop();					
 					UE_LOGFMT(LogTemp, Display, "room {number} popped from recent rooms' stack", currentRoom->roomID);
+					//if room == first room, and room has more unexplored rooms
+					int numUnexploredRooms = currentRoom->unexploredRooms.Num();
+					if (currentRoom->roomID == 1 && numUnexploredRooms > 0) {
+						recentRooms.Add(currentRoom);
+						UE_LOGFMT(LogTemp, Display, "room {number} added back to recent rooms stack because it has more rooms to explore", currentRoom->roomID);
+						UE_LOGFMT(LogTemp, Display, "current room: {number}", currentRoom->roomID);
+					}
 					continue;
 				}
 				else {
@@ -289,114 +277,28 @@ void ADungeonGenerator::rewriteContent(ARoomBase* rootNode)
 					break;
 				}
 			}
-
-			if (currentRoom->unexploredRooms.Num() == 1) {
+			//one room to explore:
+			else if (currentRoom->unexploredRooms.Num() == 1) {
 				currentRoom = currentRoom->unexploredRooms.Pop();
-				UE_LOGFMT(LogTemp, Display, "exploring room {number}", currentRoom->roomID);
+				UE_LOGFMT(LogTemp, Display, "(1) exploring room {number}", currentRoom->roomID);
 				continue;
 			}
-
-			if (currentRoom->unexploredRooms.Num() > 1) {
+			//more than one room to explore:
+			else if (currentRoom->unexploredRooms.Num() > 1) {
 				if (!recentRooms.Contains(currentRoom)) {
 					recentRooms.Add(currentRoom);
 				}
 				UE_LOGFMT(LogTemp, Display, "added room {number} to recent rooms", currentRoom->roomID);
 				currentRoom = currentRoom->unexploredRooms.Pop();
-				UE_LOGFMT(LogTemp, Display, "exploring room {number}", currentRoom->roomID);
+				UE_LOGFMT(LogTemp, Display, "(>1) exploring room {number}", currentRoom->roomID);
 				continue;
 			}
 		}
-		
 		if (loopCount > 1000) {
 			UE_LOG(LogTemp, Display, TEXT("Exceeded Loop Count. Exiting.."));
 			break;
 		}
 	}
-	
-
-	/*
-	while (recentRooms.Num() > 0) {
-		if (currentRoom != nullptr) {
-			if (currentRoom->beenVisited) {
-				UE_LOGFMT(LogTemp, Display, "room {number} has been visited before", currentRoom->roomID);
-
-				//if current room has no more rooms to explore, remove it from recent rooms,
-				//and move current room to next room on top of recentRooms stack
-				if (currentRoom->unexploredRooms.Num() == 0) {
-					if (recentRooms.Contains(currentRoom)) {
-						recentRooms.Remove(currentRoom);
-						UE_LOGFMT(LogTemp, Display, "room {number} has been explored, and removed from recent rooms stack", currentRoom->roomID);
-					}
-					if (recentRooms.Num() > 0) {
-						currentRoom = recentRooms.Last();
-					}
-					else {
-						UE_LOG(LogTemp, Display, TEXT("there are no more recent rooms, exiting.."));
-						continue;
-					} 
-					UE_LOGFMT(LogTemp, Display, "switching to room {number} from recentRooms stack", currentRoom->roomID);
-				}
-				//else, currrent room has more rooms to explore, so it should remain on the stack
-				//move to next unexplored room off of current room
-				else {
-					UE_LOGFMT(LogTemp, Display, "room {number} has more rooms to explore, so it'll remain in recent rooms stack", currentRoom->roomID);
-					currentRoom = currentRoom->unexploredRooms.Pop();
-					UE_LOGFMT(LogTemp, Display, "exploring room {number}", currentRoom->roomID);
-				}
-			}
-			//current room has not been visited -- a stack, to track unexplored rooms, needs to be created
-			else {
-				UE_LOGFMT(LogTemp, Display, "first time visiting room {number}", currentRoom->roomID);
-				currentRoom->beenVisited = true;
-				//for each connected room:
-				for (auto It = currentRoom->connectedRooms.CreateConstIterator(); It; ++It)
-				{
-					//add unexplored rooms to a stack
-					if (!It.Value()->beenVisited) {
-						currentRoom->unexploredRooms.Add(It.Value());
-						UE_LOGFMT(LogTemp, Display, "unexplored room ({number}) added to stack", It.Value()->roomID);
-
-						//display for development purposes
-						for (int i = 0; i < currentRoom->unexploredRooms.Num(); ++i) {
-							UE_LOGFMT(LogTemp, Display, "room {number} still on the stack", currentRoom->unexploredRooms[i]->roomID);
-						}
-					}
-					
-				}
-				//if currentRoom has no rooms to explore, then go back to recent room
-				if (currentRoom->unexploredRooms.Num() == 0) {
-					UE_LOGFMT(LogTemp, Display, "current room ({number}) ", currentRoom->roomID);
-					currentRoom = recentRooms.Pop();
-					UE_LOGFMT(LogTemp, Display, "going back to room {number}", currentRoom->roomID);
-
-				}
-				//else current room has more rooms to explore
-				else {
-					//if it has only 1 unexploredRoom, that room will be explored, so it doesn't need to be saved
-					//how do I avoid adding the starting room to recent rooms twice?
-					if (currentRoom->unexploredRooms.Num() > 1) {
-						if (currentRoom->isStart != true) {
-							UE_LOGFMT(LogTemp, Display, "adding room {number} to recent rooms stack", currentRoom->roomID);
-							recentRooms.Add(currentRoom);
-						}
-					}
-					currentRoom = currentRoom->unexploredRooms.Pop();
-					UE_LOGFMT(LogTemp, Display, "exploring room {number}", currentRoom->roomID);
-				}
-				
-			}
-			loopCount += 1;
-			if (loopCount >= 10000) {
-				break;
-			}
-		}
-		else {
-			UE_LOG(LogTemp, Display, TEXT("current room has null ptr"));
-			break;
-		}
-	}
-	UE_LOG(LogTemp, Display, TEXT("All done!"));
-	*/
 }
 
 void ADungeonGenerator::getUnexploredRooms(ARoomBase* currentRoom)
